@@ -121,6 +121,49 @@ li:hover {
 #introduction p {
 	margin-bottom: 0.5em;
 }
+
+#buttonPort
+{
+	text-align: center;
+}
+
+#buttonPort button
+{
+	
+	border: 1px solid #1D6154;
+	border-radius: 60px;
+	color: #1D6154;
+	font-family: 'Syne';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 16px;
+	line-height: 19px;
+	text-align: center;
+	padding-right: 1%;
+	padding-left: 1%;
+	height: 10%;
+	margin-bottom: 2%;
+	
+}
+
+#buttonPort button:hover
+{
+	background: #1D6154;
+	border: 1px solid #1D6154;
+	border-radius: 60px;
+	color: #FFFFFF;
+	font-family: 'Syne';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 16px;
+	line-height: 19px;
+	text-align: center;
+	padding-right: 1%;
+	padding-left: 1%;
+	margin-bottom: 2%;
+	
+}
+
 #portfolio h2 {
 	text-align: center;
 	margin-bottom: 1em;
