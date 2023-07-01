@@ -73,14 +73,21 @@
 					<button id="quitAP2" type="button"><i class="fa-solid fa-xmark"></i></button>
 					<h3>Ajout photo</h3>
 					<form id="photoAjout">
-						<i class="fa-solid fa-image"></i><br>
-						<button id="buttonAP" type="button">+ Ajouter photo</button>
-						<p>jpg, png : 4mo max</p>
+						<div id="imageNo">
+							<i class="fa-solid fa-image"></i><br>
+							<label id="buttonAPV" for="buttonAP">+ Ajouter photo</label>
+							<input type="file" id="buttonAP" accept=".jpg, .png">						
+							<p>jpg, png : 4mo max</p>
+						</div>
+						<div id="imageYes">
+
+						</div>
+						
 					</form>
 					
 					<form id="divTitre">
 						<label>Titre</label>
-						<input type="titre" id="titre" name="titre">
+						<input type="titre" id="titre" name="titre" oninput="titreVeri()" value="">
 					</form>
 
 					<form id="divCategorie">

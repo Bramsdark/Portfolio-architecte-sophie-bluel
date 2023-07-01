@@ -629,22 +629,27 @@ h3
 	margin-bottom: 5%;
 }
 
-#buttonAP
+#buttonAPV
 {
-	margin-top: 5%;
-	background: #CBD6DC;
-	border-radius: 50px;
-	width: 40%;
-	height: 36px;
+	display: inline-flex;
+	padding-left: 7%;
+    margin-top: 3%;
+    background: #CBD6DC;
+    border-radius: 50px;
+    width: 47%;
+    height: 18%;
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 29px;
+    line-height: 56px;
+    text-align: center;
+    color: #306685;
+}
 
-	font-family: 'Work Sans';
-	font-style: normal;
-	font-weight: 500;
-	font-size: 20px;
-	line-height: 16px;
-	text-align: center;
-
-	color: #306685;
+input[type=file]
+{
+	display: none;
 }
 
 #validationAjout
@@ -722,6 +727,7 @@ h3
 	font-size: 20px;
 	line-height: 16px;
 }
+
 
 @keyframes animationA
 {

@@ -8,11 +8,16 @@ const btnQpop = document.getElementById("quitAP");
 const btnQpop2 = document.getElementById("quitAP2");
 const btnApop = document.getElementById("aPhoto");
 const deroulant = document.getElementById("selectCate");
-const ajoutTitre = document.getElementById("titre");
 const buttonValidation = document.getElementById("validationAjout");
+const uploadImage = document.getElementById("buttonAP");
+const noImage = document.getElementById("imageNo");
+const yesImage = document.getElementById("imageYes");
+var ajoutTitre = document.getElementById("titre");
+var imageUp; 
 var id = localStorage.getItem('id');
 var token = localStorage.getItem('token');
 var tous = document.getElementById("tous");
+var imageToProcess;
 let set = new Set();
 let set2 = new Set();
 let listCatId = {name : set, id : set2};
@@ -140,8 +145,20 @@ if(btnMod)
 
 if(btnQpop){
   btnQpop.addEventListener("click", function() {
-    
+    document.getElementById('titre').value = "";
     popup.classList.toggle("active")
+    noImage.style.display = "inline";
+    yesImage.style.display = "none";
+    if(imageUp)
+    {
+      yesImage.removeChild(imageUp);
+    }
+    if(imageToProcess)
+    {
+      imageToProcess = null;
+    }
+    deroulant.value = "";
+    buttonVali();
   })
 }
 
@@ -150,13 +167,28 @@ if(btnApop)
   btnApop.addEventListener("click", function(){
     popup2.classList.toggle("active")
     popup.classList.toggle("active")
+    
   })
 }
 
 if(btnQpop2){
   btnQpop2.addEventListener("click", function() {
-    
+    document.getElementById('titre').value = "";
     popup2.classList.toggle("active")
+    noImage.style.display = "inline";
+    yesImage.style.display = "none";
+    if(imageUp)
+    {
+      yesImage.removeChild(imageUp);
+    }
+
+    if(imageToProcess)
+    {
+      imageToProcess = null;
+    }
+    buttonVali();
+    deroulant.value = "";
+    console.log(imageUp);
   })
 }
 
@@ -294,7 +326,12 @@ function filtered (cat) {
   }
 }
 
-
+function titreVeri()
+{
+  ajoutTitre = document.getElementById('titre').value;
+  console.log(deroulant);
+  buttonVali();
+}
 
 
 function deleteWork(worki) {
@@ -331,16 +368,92 @@ function deleteWork(worki) {
   });
 }
 
-if(ajoutTitre != null && deroulant != 0)
+
+function buttonVali()
 {
-  buttonValidation.style.color = "#FFFFFF";
-  buttonValidation.style.background = "#1D6154";
+  const button = document.querySelector('#validationAjout');
+  if(ajoutTitre  != "" && selectCate.value != "" && imageToProcess != null)
+  {
+    button.disabled = false;
+    buttonValidation.style.color = "#FFFFFF";
+    buttonValidation.style.background = "#1D6154";
+  }
+  else
+  {
+    button.disabled = true;
+    buttonValidation.style.color = "#306685";
+    buttonValidation.style.background = "#CBD6DC";
+  }
 }
-else
+
+
+deroulant.addEventListener("change", buttonVali, false);
+uploadImage.addEventListener("change", getImage, false);
+
+function getImage()
 {
-  buttonValidation.style.color = "#306685";
-  buttonValidation.style.background = "#CBD6DC";
+  imageToProcess = this.files[0];
+
+  let newImage = new Image(imageToProcess.width, imageToProcess.height);
+  newImage.src = URL.createObjectURL(imageToProcess);
+  newImage.style.width = "222px";
+  
+  imageUp = newImage;
+  yesImage.appendChild(newImage);
+  console.log(uploadImage);
+  noImage.style.display = "none";
+  yesImage.style.display = "inline-flex";
+  buttonVali();
 }
 
+function textToBin(text) {
+  var length = text.length,
+      output = [];
+  for (var i = 0;i < length; i++) {
+    var bin = text[i].charCodeAt().toString(2);
+    output.push(bin);
+  } 
+  return output.join("");
+}
 
+function convertImageToBinary(image) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const binaryString = reader.result;
+      resolve(binaryString);
+    };
+    reader.onerror = reject;
+    reader.readAsBinaryString(image);
+  });
+}
 
+buttonValidation.addEventListener("click", () =>{
+  var formData = new FormData();
+  var binImg = convertImageToBinary(imageToProcess);
+  var strTitle = String(ajoutTitre);
+  var cat = selectCate.selectedIndex;
+
+  formData.append("image", binImg);
+  formData.append("title", ajoutTitre);
+  formData.append("category", cat);
+
+  console.log(binImg);
+
+  fetch(url + "/works", {
+    method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token,
+        },
+        body: JSON.stringify(formData)
+  }).then((response) => response.json())
+  .then((responseData) => {
+    // Traitement de la réponse
+    console.log(responseData);
+  })
+  .catch((error) => {
+    // Gestion des erreurs
+    console.error(error);
+  });
+})
