@@ -7,8 +7,8 @@ const popup2 = document.querySelector(".modalAjout");
 const btnQpop = document.getElementById("quitAP");
 const btnQpop2 = document.getElementById("quitAP2");
 const btnApop = document.getElementById("aPhoto");
-const deroulant = document.getElementById("selectCate");
 const buttonValidation = document.getElementById("validationAjout");
+var deroulant;
 var ajoutTitre = document.getElementById("titre");
 var modi = document.getElementById("modifProf");
 var imageUp; 
@@ -126,21 +126,25 @@ function affichage()
   }
 }
 
-btnMod.addEventListener("click", () => {
+if(btnMod)
+{
+  btnMod.addEventListener("click", () => {
   
-  afficheModal1();
-  btnQ = document.getElementById("quitAP");
-  btnQ.addEventListener("click", function(){
-    deleteModal();
+    afficheModal1();
+    btnQ = document.getElementById("quitAP");
+    btnQ.addEventListener("click", function(){
+      deleteModal();
+    })
+    
+    btnA = document.getElementById("aPhoto");
+  
+    btnA.addEventListener("click", function(){
+      clearModal();
+      afficheModal2();
+    })
   })
-  
-  btnA = document.getElementById("aPhoto");
+}
 
-  btnA.addEventListener("click", function(){
-    clearModal();
-    afficheModal2();
-  })
-})
 
 function afficheModal1()
 {
@@ -175,6 +179,7 @@ function afficheModal1()
     var img2 = document.createElement("img");
     img2.src = works[i].imageUrl;
     img2.alt = works[i].title;
+    img2.style.objectFit = "cover";
     fig2.appendChild(btn3);
     fig2.appendChild(img2);
     btn3.addEventListener("click", function () {
@@ -228,7 +233,10 @@ function afficheModal2(){
   var selection = document.createElement("select");
   selection.id = "selectCate";
   selection.name = "categorie";
-  formCat.appendChild(selection);
+  
+  var option = document.createElement("option");
+  option.value = "";
+  selection.appendChild(option);
 
   categoryList.forEach((element) => {
     var options = document.createElement("option");
@@ -283,18 +291,15 @@ function afficheModal2(){
   formCat.id = "divCategorie";
   popup.appendChild(formCat);
 
+  deroulant = selection;
   
-  selection.addEventListener("change", buttonVali(btnAjout), false);
-
-  var option = document.createElement("option");
-  option.value = "";
-  selection.appendChild(option);
-
-  
-  
-    
+  selection.addEventListener("change",function() {
+    buttonVali(btnAjout);
+  });
 
   
+  formCat.appendChild(selection);
+
   popup.appendChild(btnAjout);
 
   btnAjout.addEventListener("click", function(){
@@ -513,7 +518,10 @@ function deleteWork(worki) {
 
 function buttonVali(button)
 {
-  if(ajoutTitre  != "" && selectCate.value != "" && imageToProcess != null)
+  console.log(ajoutTitre);
+  console.log(deroulant.value);
+  console.log(imageToProcess);
+  if(ajoutTitre  != "" && deroulant.value != "" && imageToProcess != null)
   {
     button.disabled = false;
     button.style.color = "#FFFFFF";
