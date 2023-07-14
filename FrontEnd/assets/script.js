@@ -1,48 +1,44 @@
 const url = "http://localhost:5678/api";
-const btnLog = document.getElementById("connect");
 const btnOut = document.getElementById("sLogout");
 const btnMod = document.getElementById("modifImg");
 const modal = document.querySelector(".modal");
-const popup2 = document.querySelector(".modalAjout");
-const btnQpop = document.getElementById("quitAP");
-const btnQpop2 = document.getElementById("quitAP2");
-const btnApop = document.getElementById("aPhoto");
-const buttonValidation = document.getElementById("validationAjout");
 var deroulant;
 var ajoutTitre = document.getElementById("titre");
 var modi = document.getElementById("modifProf");
-var imageUp; 
 var id = localStorage.getItem('id');
 var token = localStorage.getItem('token');
 var tous = document.getElementById("tous");
 var imageToProcess;
 var categoryList;
 var gallery = document.querySelector(".gallery");
+var pagePath = window.location.pathname;
+var fileName = pagePath.substring(pagePath.lastIndexOf('/') + 1);
 let works = [];
 
 
 window.onload = async function(){
-
-  try{
-    works = await worksInit();
-  }
-  catch(err){
-    console.log('err', err);
-  }
-
-  try {
-    categoryList = await invokCat();
-  } 
-  catch (err) {
-    console.log('err', err);
+  
+  if(fileName === 'index.html')
+  {
+    try{
+      works = await worksInit();
+    }
+    catch(err){
+      console.log('err', err);
+    }
+  
+    try {
+      categoryList = await invokCat();
+    } 
+    catch (err) {
+      console.log('err', err);
+    }
+  
+    buttonInit();
+    affichage();
   }
   
-  
-  buttonInit();
-  affichage();
-  console.log(works);
-  console.log(gallery);
-  
+  initProfil();
 };
 
 function invokCat()
@@ -98,9 +94,6 @@ function buttonInit()
 
 function affichage()
 {
-  worksInit();
-  
-  console.log(works.length);
   for(let i=0; i < works.length; i++)
   {
       var fig = document.createElement("figure");
@@ -115,9 +108,6 @@ function affichage()
       img.src = works[i].imageUrl;
       img.alt = works[i].title;
 
-      
-      
-      
       fig.appendChild(img);
       var figu = document.createElement("figcaption");
       figu.textContent = works[i].title;
@@ -126,31 +116,17 @@ function affichage()
   }
 }
 
-if(btnMod)
-{
-  btnMod.addEventListener("click", () => {
-  
-    afficheModal1();
-    btnQ = document.getElementById("quitAP");
-    btnQ.addEventListener("click", function(){
-      deleteModal();
-    })
-    
-    btnA = document.getElementById("aPhoto");
-  
-    btnA.addEventListener("click", function(){
-      clearModal();
-      afficheModal2();
-    })
-  })
-}
-
-
-function afficheModal1()
+function createModal()
 {
   var sec = document.createElement("section");
-  sec.classList.add("popup");
+  sec.id = ("popup");
   modal.appendChild(sec);
+  afficheModal1();
+}
+function afficheModal1()
+{
+  var sec = document.getElementById("popup");
+
   var btn = document.createElement("BUTTON");
   btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
   btn.id = "quitAP";
@@ -165,6 +141,7 @@ function afficheModal1()
   var divGallery = document.createElement("div");
   divGallery.classList.add("imageEdit");
   sec.appendChild(divGallery);
+
   for(let i=0; i < works.length; i++)
   {
     var btn3 = document.createElement("BUTTON");
@@ -199,9 +176,29 @@ function afficheModal1()
   asupp = document.createElement("a");
   asupp.href = "#";
   asupp.innerHTML = 'Supprimer la galerie';
+
+  asupp.addEventListener("click", function()
+  {
+    for(var i = 0; i < works.length; i++)
+    {
+      deleteWork(works[i]);
+    }
+  })
+
   psuppr.appendChild(asupp);
   sec.appendChild(psuppr);
-  modal.classList.toggle("active");
+  
+  btnQ = document.getElementById("quitAP");
+  btnQ.addEventListener("click", function(){
+    deleteModal();
+  })
+  
+  btnA = document.getElementById("aPhoto");
+
+  btnA.addEventListener("click", function(){
+    clearModal();
+    afficheModal2();
+  })
 }
 
 function afficheModal2(){
@@ -219,7 +216,12 @@ function afficheModal2(){
   lab.htmlFor = "buttonAP";
   lab.textContent = "+ Ajouter photo";
   
-  var popup = document.querySelector(".popup");
+  var btnReturn = document.createElement("BUTTON");
+  btnReturn.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
+  btnReturn.id = "returnBtn";
+
+
+  var popup = document.getElementById("popup");
   var btn = document.createElement("BUTTON");
   btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
   btn.id = "quitAP";
@@ -245,9 +247,15 @@ function afficheModal2(){
     selection.appendChild(options);
   })
 
+  btnReturn.addEventListener("click", function(){
+    clearModal();
+    afficheModal1();
+  })
+
   btn.addEventListener("click", function(){
     deleteModal();
   })
+  popup.appendChild(btnReturn);
   popup.appendChild(btn);
 
   var aP = document.createElement("h3");
@@ -318,27 +326,87 @@ function deleteModal()
 
 function clearModal()
 {
-  sec = document.querySelector(".popup");
+  sec = document.getElementById("popup");
   while (sec.firstChild) {
     sec.removeChild(sec.firstChild);
   }
 }
 
-if (btnLog) {
-  btnLog.addEventListener("click", () => {
-    connexion();
-  });
+function initProfil(){
+  if(fileName === 'index.html')
+  {
+    if(id == 1)
+    {
+      var bar = document.getElementById("bandeEdit");
+      bar.style.display = "flex";
+      var modi1 = document.getElementById("modifImg");
+      modi1.style.display = "inline";
+      modi.style.display = "flex";
+      var slogin = document.getElementById("sLogin");
+      slogin.style.display = "none";
+      var slogout = document.getElementById("sLogout");
+      slogout.style.display = "inline";
+      var filtre = document.getElementById("buttonPort");
+      filtre.style.display = "none";
+      btnOut.addEventListener("click", () => {
+        localStorage.removeItem('id');
+        localStorage.removeItem('token');
+      });
+      
+      btnMod.addEventListener("click", () => {
+        createModal();
+        modal.classList.toggle("active");
+      });
+    }
+    else
+    {
+      var bar = document.getElementById("bandeEdit");
+      bar.style.display = "none";
+      var modi1 = document.getElementById("modifImg");
+      modi1.style.display = "none";
+      var modi2 = document.getElementById("modifProf");
+      modi2.style.display = "none";
+      var slogin = document.getElementById("sLogin");
+      slogin.style.display = "inline";
+      var slogout = document.getElementById("sLogout");
+      slogout.style.display = "none";
+      var filtre = document.getElementById("buttonPort");
+      filtre.style.display = "flexbox";
+      
+      tous.addEventListener("click", () => {
+      
+        for(var i = 0; i < categoryList.length; i++)
+        {
+          var k = i + 1;
+          var classCat = document.getElementsByClassName("category" + k);
+          var idButtonCat = document.getElementById("category" + k);
+          
+          for(var j = 0; j < classCat.length; j++)
+          {
+            classCat[j].style.display = "inline";
+            
+          }
+        
+          idButtonCat.style.color = "#000000";
+          idButtonCat.style.background = "#FFFFFF";
+        
+        }
+      
+        var buttonTous = document.getElementById("tous");
+        buttonTous.style.color = "#FFFFFF";
+        buttonTous.style.background = "#1D6154";
+      });
+    }
+  }
+  
+  else
+  {
+    var btnLog = document.getElementById("connect");
+    btnLog.addEventListener("click", () => {
+      connexion();
+    });
+  }
 }
-
-if (btnOut) {
-  btnOut.addEventListener("click", () => {
-    localStorage.removeItem('id');
-    localStorage.removeItem('token');
-  });
-}
-
-
-
 
 function connexion() {
   var data = {
@@ -356,7 +424,6 @@ function connexion() {
     .then((response) => {
       if (response.status == 200) {
         response.json().then((data) => {
-          console.log(data);
           id = data.userId;
           token = data.token;
 
@@ -375,63 +442,8 @@ function connexion() {
     .catch((error) => console.error(error));
 }
 
-if(id == 1)
-{
-    var bar = document.getElementById("bandeEdit");
-    bar.style.display = "flex";
-    var modi1 = document.getElementById("modifImg");
-    modi1.style.display = "inline";
-    modi.style.display = "flex";
-    var slogin = document.getElementById("sLogin");
-    slogin.style.display = "none";
-    var slogout = document.getElementById("sLogout");
-    slogout.style.display = "inline";
-    var filtre = document.getElementById("buttonPort");
-    filtre.style.display = "none";
-}
-else
-{
-    var bar = document.getElementById("bandeEdit");
-    bar.style.display = "none";
-    var modi1 = document.getElementById("modifImg");
-    modi1.style.display = "none";
-    var modi2 = document.getElementById("modifProf");
-    modi2.style.display = "none";
-    var slogin = document.getElementById("sLogin");
-    slogin.style.display = "inline";
-    var slogout = document.getElementById("sLogout");
-    slogout.style.display = "none";
-    var filtre = document.getElementById("buttonPort");
-    filtre.style.display = "flexbox";
-}
-
-
-tous.addEventListener("click", () => {
-  
-  for(var i = 0; i < categoryList.length; i++)
-  {
-    var k = i + 1;
-    var classCat = document.getElementsByClassName("category" + k);
-    var idButtonCat = document.getElementById("category" + k);
-    
-    for(var j = 0; j < classCat.length; j++)
-    {
-      classCat[j].style.display = "inline";
-      
-    }
-
-    idButtonCat.style.color = "#000000";
-    idButtonCat.style.background = "#FFFFFF";
-
-  }
-
-  var buttonTous = document.getElementById("tous");
-  buttonTous.style.color = "#FFFFFF";
-  buttonTous.style.background = "#1D6154";
-});
 
 function filtered (cat) {
-  console.log(categoryList.length);
 
   for(var i = 0; i < categoryList.length; i++)
   {
@@ -457,11 +469,9 @@ function filtered (cat) {
     buttonTous.style.background = "#FFFFFF";
 
     var idButtonCat = document.getElementById("category" + k);
-    console.log(idButtonCat);
     
     if(idButtonCat.id == cat)
     {
-      console.log("Bouton changer !")
       idButtonCat.style.color = "#FFFFFF";
       idButtonCat.style.background = "#1D6154";
     }
@@ -480,17 +490,13 @@ function titreVeri(button)
   buttonVali(button);
 }
 
-
 function deleteWork(worki) {
-    console.log(worki.id);
-    console.log("Item Deleted");
     var gall = "gallId" + worki.id;
     var mod = "modId" + worki.id;
-    console.log(gall);
-    console.log(mod);
+
     const elements = document.getElementById(gall);
     const elements2 = document.getElementById(mod);
-    console.log(elements);
+
     elements.remove();
     elements2.remove();
     
@@ -515,12 +521,8 @@ function deleteWork(worki) {
   });
 }
 
-
 function buttonVali(button)
 {
-  console.log(ajoutTitre);
-  console.log(deroulant.value);
-  console.log(imageToProcess);
   if(ajoutTitre  != "" && deroulant.value != "" && imageToProcess != null)
   {
     button.disabled = false;
@@ -535,11 +537,9 @@ function buttonVali(button)
   }
 }
 
-
 function getImage(inputP, button)
 {
   yesImage = document.getElementById("photoAjout");
-  console.log(yesImage);
   imageToProcess = inputP.files[0];
 
   let newImage = new Image(imageToProcess.width, imageToProcess.height);
@@ -548,25 +548,12 @@ function getImage(inputP, button)
   newImage.style.height = "279px";
   newImage.style.objectFit = "cover";
   
-  imageUp = newImage;
-  
   while (yesImage.firstChild) {
     yesImage.removeChild(yesImage.firstChild);
   }
   yesImage.appendChild(newImage);
   buttonVali(button);
 }
-
-function textToBin(text) {
-  var length = text.length,
-      output = [];
-  for (var i = 0;i < length; i++) {
-    var bin = text[i].charCodeAt().toString(2);
-    output.push(bin);
-  } 
-  return output.join("");
-}
-
 
 function uploadImage(){
   var formData = new FormData();
@@ -577,8 +564,6 @@ function uploadImage(){
   formData.append("title", strTitle);
   formData.append("category", cat);
 
-  console.log(strTitle);
-
   fetch(url + "/works", {
     method: 'POST',
     headers: {
@@ -588,8 +573,6 @@ function uploadImage(){
   })
   .then((response) => response.json())
   .then((responseData) => {
-    
-    console.log(responseData);
     cleanData();
   })
   .catch((error) => {
@@ -605,7 +588,8 @@ async function cleanData()
   }
   works = await worksInit();
   affichage();
-  document.getElementById('titre').value = "";
+  var titre = document.getElementById('titre');
+  titre = "";
   deroulant.value = "";
 }
 

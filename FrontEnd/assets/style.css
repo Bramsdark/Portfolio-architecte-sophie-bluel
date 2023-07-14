@@ -559,7 +559,7 @@ h3
 	display: flex;
 }
 
-.popup, .popupAjout
+#popup, .popupAjout
 {
 	height: 80%;
 	width: 630px;
